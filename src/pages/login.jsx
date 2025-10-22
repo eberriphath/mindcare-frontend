@@ -1,58 +1,103 @@
 import React, { useState } from "react";
 
-const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+const API_URL = "http://127.0.0.1:5000";
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+const AuthPage = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login data:", formData);
+
+    const endpoint = isLogin ? "/login" : "/register";
+    const payload = isLogin ? { email, password } : { name, email, password };
+
+    try {
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setMessage(isLogin ? "Login successful!" : "Registration successful!");
+        console.log("User data:", data);
+        if (isLogin) localStorage.setItem("token", data.access_token);
+      } else {
+        setMessage(data.message || "Something went wrong.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Error connecting to server.");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[url('/background.jpg')] bg-cover bg-center">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-8 w-[90%] max-w-md text-white">
-        <h2 className="text-3xl font-semibold mb-6 text-center">Welcome Back</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200">
+      <div className="w-full max-w-md bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-white/40">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
+          {isLogin ? "Login to MindCare" : "Create Your MindCare Account"}
+        </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {!isLogin && (
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              required
+            />
+          )}
           <input
             type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
             required
           />
           <input
             type="password"
-            name="password"
             placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-300"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
             required
           />
+
           <button
             type="submit"
-            className="mt-4 bg-blue-500/80 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-all duration-300"
+            className="w-full py-3 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition duration-200"
           >
-            Login
+            {isLogin ? "Login" : "Register"}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-center text-gray-200">
-          Don’t have an account?{" "}
-          <a href="/register" className="text-blue-400 hover:underline">
-            Register
-          </a>
+        {message && (
+          <p className="text-center text-sm text-gray-700 mt-4">{message}</p>
+        )}
+
+        <p className="text-center text-gray-600 mt-6">
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <button
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setMessage("");
+            }}
+            className="text-green-600 font-semibold hover:underline"
+          >
+            {isLogin ? "Register" : "Login"}
+          </button>
         </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default AuthPage;

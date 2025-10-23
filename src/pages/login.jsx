@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 const API_URL = "http://127.0.0.1:5000/user";
 
 const AuthPage = () => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +28,11 @@ const AuthPage = () => {
       if (response.ok) {
         setMessage(isLogin ? "Login successful!" : "Registration successful!");
         console.log("User data:", data);
-        if (isLogin) localStorage.setItem("token", data.access_token);
+        if (isLogin) {
+          localStorage.setItem("token", data.access_token);
+          const role = data.role || 'client';
+          navigate(`/${role}`);
+        }
       } else {
         setMessage(data.message || "Something went wrong.");
       }
@@ -95,6 +101,13 @@ const AuthPage = () => {
             {isLogin ? "Register" : "Login"}
           </button>
         </p>
+        
+        <div className="text-center mt-4 text-sm text-gray-600">
+          Quick access: 
+          <Link to="/admin" className="text-green-600 hover:underline mx-1">Admin</Link> |
+          <Link to="/therapist" className="text-green-600 hover:underline mx-1">Therapist</Link> |
+          <Link to="/client" className="text-green-600 hover:underline mx-1">Client</Link>
+        </div>
       </div>
     </div>
   );

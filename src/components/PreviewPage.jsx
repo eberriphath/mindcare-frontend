@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function PreviewPage({ title, children }) {
+function PreviewPage({ title, children }) {
     return (
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white border-b">
@@ -22,3 +22,5 @@ export default function PreviewPage({ title, children }) {
         </div>
     );
 }
+
+export default PreviewPage;

@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-export default function Sidebar() {
+function Sidebar() {
   const links = [
     { path: "/dashboard/admin", label: "Admin", icon: <Users size={18} /> },
     { path: "/dashboard/therapist", label: "Therapist", icon: <UserCog size={18} /> },
@@ -39,3 +39,5 @@ export default function Sidebar() {
     </div>
   );
 }
+
+export default Sidebar;

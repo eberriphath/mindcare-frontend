@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 
 
+
 function AdminDashboard(){
   const [users, setUsers] = useState([
-    { id:1, name:"John Doe", email:"john@example.com", role:"client" },
-    { id:2, name:"Dr. Smith", email:"smith@example.com", role:"therapist" }
+    { id:1, name:"John i john i", email:"you@example.com", role:"client" },
+    { id:2, name:"Dr. dr", email:"me@example.com", role:"therapist" }
   ]);
   const [sessions, setSessions] = useState([
-    { id:1, client:"John Doe", therapist:"Dr. Smith", date:"2024-01-15", status:"completed" }
+    { id:1, client:"John knee", therapist:"Dr. daktari", date:"2024-01-15", status:"completed" }
   ]);
 
   const addUser = () => {

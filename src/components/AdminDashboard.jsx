@@ -19,14 +19,12 @@ export default function AdminDashboard(){
 
   return (
     <div className="space-y-6">
-      {/* stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card label="Total Users" value={users.length} />
         <Card label="Therapists" value={users.filter(u=>u.role==="therapist").length} />
         <Card label="Sessions" value={sessions.length} />
       </div>
 
-      {/* Users table */}
       <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h2 className="font-semibold">Users</h2>

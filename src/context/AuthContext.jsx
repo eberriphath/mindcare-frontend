@@ -7,7 +7,6 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check for stored authentication data on component mount
         const token = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
 
@@ -16,7 +15,6 @@ export const AuthProvider = ({ children }) => {
                 setUser(JSON.parse(storedUser));
             } catch (error) {
                 console.error('Error parsing stored user data:', error);
-                // Clear invalid data
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
             }

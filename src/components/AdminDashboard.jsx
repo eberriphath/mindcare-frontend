@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 
-/**
- Admin: Manage Users, Therapists, Sessions (CRUD placeholders)
-*/
-export default function AdminDashboard(){
+
+function AdminDashboard(){
   const [users, setUsers] = useState([
     { id:1, name:"John Doe", email:"john@example.com", role:"client" },
     { id:2, name:"Dr. Smith", email:"smith@example.com", role:"therapist" }
@@ -22,14 +20,14 @@ export default function AdminDashboard(){
 
   return (
     <div className="space-y-6">
-      {/* stats */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card label="Total Users" value={users.length} />
         <Card label="Therapists" value={users.filter(u=>u.role==="therapist").length} />
         <Card label="Sessions" value={sessions.length} />
       </div>
 
-      {/* Users table */}
+      
       <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h2 className="font-semibold">Users</h2>
@@ -57,7 +55,7 @@ export default function AdminDashboard(){
         </table>
       </div>
 
-      {/* Sessions table */}
+      
       <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
         <div className="px-4 py-3 border-b flex justify-between items-center">
           <h2 className="font-semibold">Sessions</h2>
@@ -94,3 +92,6 @@ function Card({label,value}) {
     </div>
   );
 }
+
+
+export default AdminDashboard;

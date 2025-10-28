@@ -22,7 +22,7 @@ const navByRole = {
   ],
 };
 
-export default function DashboardLayout() {
+function DashboardLayout() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const role = user?.role || 'client';
@@ -78,3 +78,5 @@ export default function DashboardLayout() {
     </div>
   );
 }
+
+export default DashboardLayout;

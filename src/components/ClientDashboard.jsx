@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 
-/**
- Client: profile, sessions, book new session (simulated)
-*/
-export default function ClientDashboard(){
+function ClientDashboard(){
   const [profile,setProfile] = useState({ name:"John Doe", email:"john@example.com", phone:"+1 555 123" });
   const [sessions,setSessions] = useState([
     { id:1, therapist:"Dr. Smith", date:"2024-01-15", time:"10:00", status:"completed" },
@@ -71,3 +68,6 @@ export default function ClientDashboard(){
     </div>
   );
 }
+
+
+export default ClientDashboard;

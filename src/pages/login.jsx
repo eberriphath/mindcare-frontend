@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "http://127.0.0.1:5000/user";
+const API_URL = "http://127.0.0.1:5000";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -22,6 +22,11 @@ const AuthPage = () => {
     setMessage("");
 
     const endpoint = isLogin ? "/login" : "/register";
+    const payload = isLogin ? { email, password } : { name, email, password, role };
+
+    
+    if (!isLogin && role === 'admin') {
+      const ok = window.confirm('You are attempting to register as an admin. Are you sure?');
     const payload = isLogin
       ? { email, password }
       : { name, email, password, role };
@@ -48,12 +53,20 @@ const AuthPage = () => {
       if (response.ok) {
         setMessage(isLogin ? "Login successful!" : "Registration successful!");
         if (isLogin) {
+      
           const userData = {
             email: data.email,
             name: data.name,
             role: data.role || "client",
             id: data.id,
           };
+
+          login(userData, data.access_token)
+
+          const from = location.state?.from?.pathname || `/${userData.role}`;
+          navigate(from, { replace: true });
+        } else {
+          
           login(userData, data.access_token);
           const from = location.state?.from?.pathname || `/${userData.role}`;
           navigate(from, { replace: true });

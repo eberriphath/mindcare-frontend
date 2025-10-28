@@ -15,11 +15,10 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
-          {/* Public routes */}
+       
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Protected routes with DashboardLayout */}
           <Route element={<DashboardLayout />}>
             <Route
               path="/admin/*"
@@ -49,8 +48,6 @@ function App() {
             />
           </Route>
 
-          {/* Catch all route for 404 */}
-          {/* Preview routes (no auth) */}
           <Route path="/preview/admin" element={<PreviewPage title="Admin Preview"><AdminDashboard /></PreviewPage>} />
           <Route path="/preview/therapist" element={<PreviewPage title="Therapist Preview"><TherapistDashboard /></PreviewPage>} />
           <Route path="/preview/client" element={<PreviewPage title="Client Preview"><ClientDashboard /></PreviewPage>} />

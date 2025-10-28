@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { mockClientProfile, mockClientSessions } from "../mockData";
+
 
 const API_URL = "http://127.0.0.1:5000";
 
 export default function ClientDashboard() {
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    gender: "",
-  });
-  const [sessions, setSessions] = useState([]);
+  const [profile, setProfile] = useState(mockClientProfile);
+  const [sessions, setSessions] = useState(mockClientSessions);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Fetch profile and sessions from backend on mount
+
   useEffect(() => {
     const fetchData = async () => {
       try {

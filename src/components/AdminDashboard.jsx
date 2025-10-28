@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 
-/**
- Admin: Manage Users, Therapists, Sessions (CRUD placeholders)
-*/
 export default function AdminDashboard(){
   const [users, setUsers] = useState([
     { id:1, name:"John Doe", email:"john@example.com", role:"client" },

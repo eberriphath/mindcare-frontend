@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 
-/**
- Client: profile, sessions, book new session (simulated)
-*/
 export default function ClientDashboard(){
   const [profile,setProfile] = useState({ name:"John Doe", email:"john@example.com", phone:"+1 555 123" });
   const [sessions,setSessions] = useState([

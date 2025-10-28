@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 
-/**
- Therapist: Manage availability + bookings
-*/
 export default function TherapistDashboard(){
   const [availability, setAvailability] = useState([
     { id:1, date:"2024-01-20", time:"09:00", available:true },

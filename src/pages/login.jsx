@@ -24,7 +24,6 @@ const AuthPage = () => {
     const endpoint = isLogin ? "/login" : "/register";
     const payload = isLogin ? { email, password } : { name, email, password, role };
 
-    // simple confirmation for admin registration to avoid accidental admin creation
     if (!isLogin && role === 'admin') {
       const ok = window.confirm('You are attempting to register as an admin. Are you sure?');
       if (!ok) {
@@ -46,7 +45,6 @@ const AuthPage = () => {
         setMessage(isLogin ? "Login successful!" : "Registration successful!");
 
         if (isLogin) {
-          // Store user data in auth context and localStorage
           const userData = {
             email: data.email,
             name: data.name,
@@ -56,11 +54,9 @@ const AuthPage = () => {
 
           login(userData, data.access_token);
 
-          // Redirect to the page they tried to visit or their role-specific dashboard
           const from = location.state?.from?.pathname || `/${userData.role}`;
           navigate(from, { replace: true });
         } else {
-          // After successful registration, switch to login view
           setIsLogin(true);
           setEmail("");
           setPassword("");

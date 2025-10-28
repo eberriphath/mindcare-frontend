@@ -54,7 +54,6 @@ export default function AdminDashboard(){
         </table>
       </div>
 
-      {/* Sessions table */}
       <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
         <div className="px-4 py-3 border-b flex justify-between items-center">
           <h2 className="font-semibold">Sessions</h2>

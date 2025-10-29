@@ -26,7 +26,7 @@ const AuthPage = () => {
       : { full_name: fullName, email, password };
 
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {   // ✅ backticks added
+      const response = await fetch(`${API_URL}${endpoint}`, {   
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -37,7 +37,7 @@ const AuthPage = () => {
       if (response.ok) {
         if (isLogin) {
           login(data.user, data.access_token);
-          const from = location.state?.from?.pathname || `/${data.user.role}`;  // ✅ template literal fixed
+          const from = location.state?.from?.pathname || `/${data.user.role}`;  
           navigate(from, { replace: true });
         } else {
           setIsLogin(true);
@@ -60,7 +60,7 @@ const AuthPage = () => {
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
-      style={{ backgroundImage: "url('/src/assets/background.png')" }}  // ✅ wrapped in quotes
+      style={{ backgroundImage: "url('/src/assets/background.png')" }}  
     >
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
       <div className="relative w-full max-w-md bg-white/20 backdrop-blur-2xl rounded-2xl shadow-2xl p-8 border border-white/30">
@@ -100,7 +100,7 @@ const AuthPage = () => {
             disabled={isLoading}
             className={`w-full py-3 rounded-lg bg-green-500/80 text-white font-semibold transition duration-200 shadow-md ${
               isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-500 hover:shadow-lg"
-            }`}  // ✅ wrapped classes inside template literal
+            }`}  
           >
             {isLoading ? "Processing..." : isLogin ? "Login" : "Register"}
           </button>

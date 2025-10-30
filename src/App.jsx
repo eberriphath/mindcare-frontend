@@ -8,6 +8,7 @@ import ClientDashboard from "./components/ClientDashboard";
 import DashboardLayout from "./components/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PreviewPage from "./components/PreviewPage";
+import About from "./pages/About";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
        
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<About />} />
 
           <Route element={<DashboardLayout />}>
             <Route

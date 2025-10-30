@@ -6,25 +6,36 @@ function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-white shadow p-4 flex justify-between items-center">
-      <h1 className="text-xl font-bold text-green-600">MindCare</h1>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white/20 backdrop-blur-xl border-b border-white/30 shadow-sm p-4 flex justify-between items-center">
+      <Link
+        to="/home"
+        className="text-2xl font-bold text-white drop-shadow-md hover:text-green-300 transition"
+      >
+        MindCare
+      </Link>
 
-      <div className="space-x-4">
-        <Link to="/about" className="text-gray-700 hover:text-green-600">
+      <div className="space-x-4 flex items-center">
+        <Link
+          to="/about"
+          className="text-white/90 hover:text-green-300 transition font-medium"
+        >
           About
         </Link>
 
         {user ? (
           <>
             {user.role === "admin" && (
-              <Link to="/admin" className="text-gray-700 hover:text-green-600">
+              <Link
+                to="/admin"
+                className="text-white/90 hover:text-green-300 transition font-medium"
+              >
                 Dashboard
               </Link>
             )}
             {user.role === "therapist" && (
               <Link
                 to="/therapist"
-                className="text-gray-700 hover:text-green-600"
+                className="text-white/90 hover:text-green-300 transition font-medium"
               >
                 Dashboard
               </Link>
@@ -32,14 +43,14 @@ function Navbar() {
             {user.role === "client" && (
               <Link
                 to="/client"
-                className="text-gray-700 hover:text-green-600"
+                className="text-white/90 hover:text-green-300 transition font-medium"
               >
                 Dashboard
               </Link>
             )}
             <button
               onClick={logout}
-              className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+              className="bg-green-500/90 hover:bg-green-400 text-white font-medium px-4 py-1.5 rounded-lg shadow-md transition"
             >
               Logout
             </button>
@@ -47,7 +58,7 @@ function Navbar() {
         ) : (
           <Link
             to="/login"
-            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+            className="bg-green-500/90 hover:bg-green-400 text-white font-medium px-4 py-1.5 rounded-lg shadow-md transition"
           >
             Login
           </Link>

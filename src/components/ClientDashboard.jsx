@@ -17,6 +17,23 @@ function Sidebar() {
   );
 }
 
+// placeholder function for email notifications
+async function notifyClient(session) {
+  try {
+    await fetch(`${API_URL}/notifications/email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: session.email,
+        subject: "Session Booked",
+        message: `Your session with ${session.therapist} on ${session.date} at ${session.time} is confirmed.`
+      })
+    });
+  } catch (err) {
+    console.error("Error sending email:", err);
+  }
+}
+
 export default function ClientDashboard() {
   const [profile, setProfile] = useState(mockClientProfile);
   const [sessions, setSessions] = useState(mockClientSessions);
@@ -60,12 +77,21 @@ export default function ClientDashboard() {
       const res = await fetch(`${API_URL}/client/sessions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ therapist: therapist.value, date: date.value, time: time.value })
+        body: JSON.stringify({
+          therapist: therapist.value,
+          date: date.value,
+          time: time.value,
+          email: profile.email // include email for notification
+        })
       });
       if (!res.ok) throw new Error();
       const newSession = await res.json();
       setSessions([newSession, ...sessions]);
       setBookingOpen(false);
+
+      // send email notification
+      notifyClient(newSession);
+
     } catch { alert("Error booking session"); }
     finally { setLoading(false); }
   };

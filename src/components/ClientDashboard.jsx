@@ -17,7 +17,7 @@ function Sidebar() {
   );
 }
 
-// placeholder function for email notifications
+
 async function notifyClient(session) {
   try {
     await fetch(`${API_URL}/notifications/email`, {
@@ -81,7 +81,7 @@ export default function ClientDashboard() {
           therapist: therapist.value,
           date: date.value,
           time: time.value,
-          email: profile.email // include email for notification
+          email: profile.email 
         })
       });
       if (!res.ok) throw new Error();
@@ -89,7 +89,7 @@ export default function ClientDashboard() {
       setSessions([newSession, ...sessions]);
       setBookingOpen(false);
 
-      // send email notification
+      
       notifyClient(newSession);
 
     } catch { alert("Error booking session"); }

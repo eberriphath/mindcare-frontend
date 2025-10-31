@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import MoodTracker from "./MoodTracker";
 import { mockClientProfile, mockClientSessions } from "../mockData";
 import backgroundImage from "../assets/background.png";
 
@@ -27,10 +28,9 @@ function ClientDashboard() {
   const handleChange = (e) => setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
   const handleSave = () => { setProfile(tempProfile); setEditMode(false); };
 
-  // Notes handler (alert removed)
+  // Notes handler
   const handleAddNote = () => {
     if (notes.trim() === "") return;
-    // Backend integration for saving notes can go here
     setNotes("");
   };
 
@@ -60,6 +60,7 @@ function ClientDashboard() {
 
   return (
     <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: `url(${backgroundImage})` }}>
+      
       {/* Header */}
       <header className="sticky top-0 bg-white border-b z-10 h-16 flex items-center shadow-sm">
         <div className="max-w-7xl mx-auto w-full px-4 flex justify-between items-center">
@@ -76,9 +77,10 @@ function ClientDashboard() {
 
       {/* Main */}
       <main className="pt-16 min-h-screen p-6 max-w-5xl mx-auto space-y-6">
+
         {/* Tabs */}
         <div className="flex gap-3 justify-center">
-          {["profile","sessions","booking","notes"].map(tab => (
+          {["profile","sessions","booking","notes","mood"].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -86,7 +88,7 @@ function ClientDashboard() {
                 activeTab === tab ? "bg-green-500 text-white" : "bg-gray-200/30 text-white hover:bg-green-100/30"
               }`}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab === "mood" ? "Mood Tracker" : tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
         </div>
@@ -166,10 +168,16 @@ function ClientDashboard() {
           </div>
         )}
 
+        {/* Mood Tracker Tab */}
+        {activeTab === "mood" && (
+          <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-6 shadow-lg text-white">
+            <MoodTracker />
+          </div>
+        )}
+
       </main>
     </div>
   );
 }
 
 export default ClientDashboard;
-``

@@ -7,7 +7,7 @@ function Topbar() {
       <div className="flex items-center gap-4">
         <img
           src="https://i.pravatar.cc/40"
-          alt="User Avatar"
+          alt="User aAvatar"
           className="rounded-full w-10 h-10 border"
         />
         <span className="font-medium text-gray-700">Dr. Naomi</span>

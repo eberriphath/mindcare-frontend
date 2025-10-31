@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/background.png";
 
 const API_URL = "http://127.0.0.1:5000/auth";
 
-const AuthPage = () => {
+const Login = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { login } = useAuth();
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,25 +35,27 @@ const AuthPage = () => {
       });
 
       const data = await response.json();
+      console.log("Server Response:", data);
 
       if (response.ok) {
         if (isLogin) {
           login(data.user, data.access_token);
-          const from = location.state?.from?.pathname || `/${data.user.role}`;
-          navigate(from, { replace: true });
+          setMessage("✅ Login successful! Redirecting...");
+
+          setTimeout(() => navigate("/portal"), 1200);
         } else {
           setIsLogin(true);
           setFullName("");
           setEmail("");
           setPassword("");
-          setMessage("Registration successful! Please log in.");
+          setMessage("✅ Registration successful! Please log in.");
         }
       } else {
-        setMessage(data.error || data.message || "Something went wrong.");
+        setMessage(data.error || data.message || "⚠️ Something went wrong.");
       }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("Error connecting to server. Please try again later.");
+      setMessage("⚠️ Unable to connect to server. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +66,7 @@ const AuthPage = () => {
       className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center relative"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
       <div className="absolute top-0 left-0 w-full z-20">
         <Navbar />
@@ -82,26 +84,29 @@ const AuthPage = () => {
               placeholder="Full Name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none"
+              className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
               required
             />
           )}
+
           <input
             type="email"
             placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none"
+            className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
             required
           />
+
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none"
+            className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
             required
           />
+
           <button
             type="submit"
             disabled={isLoading}
@@ -136,4 +141,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;
+export default Login;

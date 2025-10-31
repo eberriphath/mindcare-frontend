@@ -58,12 +58,6 @@ export default function About() {
             Compassion • Privacy • Innovation • Connection
           </p>
         </div>
-
-        <div className="text-center mt-10">
-          <button className="px-6 py-2 rounded-full bg-indigo-600/90 hover:bg-indigo-500 text-white text-sm font-medium transition">
-            Get Started
-          </button>
-        </div>
       </div>
     </div>
   );

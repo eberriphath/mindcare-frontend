@@ -9,12 +9,19 @@ function Navbar() {
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/20 backdrop-blur-xl border-b border-white/30 shadow-sm p-4 flex justify-between items-center">
       <Link
         to="/home"
-        className="text-2xl font-bold text-white drop-shadow-md hover:text-green-300 transition"
+        className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-500 drop-shadow-md"
       >
         MindCare
       </Link>
 
       <div className="space-x-4 flex items-center">
+        <Link
+          to="/"
+          className="text-white/90 hover:text-green-300 transition font-medium"
+        >
+          Home
+        </Link>
+
         <Link
           to="/about"
           className="text-white/90 hover:text-green-300 transition font-medium"
@@ -34,7 +41,7 @@ function Navbar() {
             )}
             {user.role === "therapist" && (
               <Link
-                to="/therapist"
+                to="/therapist-dashboard"
                 className="text-white/90 hover:text-green-300 transition font-medium"
               >
                 Dashboard
@@ -42,7 +49,7 @@ function Navbar() {
             )}
             {user.role === "client" && (
               <Link
-                to="/client"
+                to="/client-dashboard"
                 className="text-white/90 hover:text-green-300 transition font-medium"
               >
                 Dashboard

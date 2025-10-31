@@ -10,9 +10,6 @@ const navByRole = {
   therapist: [
     { to: "therapist", label: "Therapist Overview" },
   ],
-  client: [
-    { to: "client", label: "Client Overview" },
-  ],
 };
 
 function DashboardLayout() {
@@ -22,30 +19,34 @@ function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen bg-gray-50 text-gray-800">
-      <aside className="w-64 bg-white border-r hidden md:block">
-        <div className="p-6">
-          <h2 className="text-2xl font-semibold text-slate-800">MindCare</h2>
-          <p className="text-sm text-gray-500 mt-1">{role} Panel</p>
-        </div>
-        <nav className="p-4 space-y-1">
-          {links.map((l, i) => (
-            <NavLink
-              to={l.to}
-              key={i}
-              className={({ isActive }) =>
-                `block px-4 py-2 rounded-md text-sm ${
-                  isActive ? "bg-slate-100 font-medium" : "hover:bg-slate-50"
-                }`
-              }
-            >
-              {l.label}
-            </NavLink>
-          ))}
-          <div className="mt-4 px-4 text-xs text-gray-400">v1.0</div>
-        </nav>
-      </aside>
+      {/* Sidebar */}
+      {links.length > 0 && (
+        <aside className="w-48 bg-white border-r hidden md:block">
+          <div className="p-6">
+            <h2 className="text-2xl font-semibold text-slate-800">MindCare</h2>
+            <p className="text-sm text-gray-500 mt-1">{role} Panel</p>
+          </div>
+          <nav className="p-4 space-y-1">
+            {links.map((l, i) => (
+              <NavLink
+                to={l.to}
+                key={i}
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md text-sm ${
+                    isActive ? "bg-slate-100 font-medium" : "hover:bg-slate-50"
+                  }`
+                }
+              >
+                {l.label}
+              </NavLink>
+            ))}
+            <div className="mt-4 px-4 text-xs text-gray-400">v1.0</div>
+          </nav>
+        </aside>
+      )}
 
-      <div className="flex-1 md:ml-64">
+      {/* Main content */}
+      <div className={`flex-1 ${links.length > 0 ? "md:ml-48" : ""}`}>
         <header className="sticky top-0 bg-white border-b z-10">
           <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-4">
@@ -69,7 +70,7 @@ function DashboardLayout() {
         </header>
 
         <main className="max-w-7xl mx-auto p-6">
-          <Outlet /> {/* <- Child dashboards render here */}
+          <Outlet /> {/* child dashboard renders here */}
         </main>
       </div>
     </div>

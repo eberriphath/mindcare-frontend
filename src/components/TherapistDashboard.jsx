@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { mockTherapistProfile, mockTherapistAvailability, mockTherapistBookings } from "../mockData";
+import backgroundImage from "../assets/background.png";
+
+const useMock = true;
 
 export default function TherapistDashboard() {
-  const [profile] = useState({
-    name: "Dr. You",
-    email: "you@example.com",
-    phone: "02833572869",
-    gender: "Male",
-  });
+  const [profile, setProfile] = useState(null);
   const [availability, setAvailability] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
 
   useEffect(() => {
-    setAvailability([
-      { id: 1, date: "2024-01-20", time: "09:00", available: true },
-      { id: 2, date: "2024-01-20", time: "10:00", available: false },
-    ]);
-    setBookings([
-      { id: 1, client: "John Doe", date: "2024-01-20", time: "10:00", status: "pending" },
-    ]);
-    setLoading(false);
+    if (useMock) {
+      setProfile(mockTherapistProfile);
+      setAvailability(mockTherapistAvailability);
+      setBookings(mockTherapistBookings);
+      setLoading(false);
+      return;
+    }
+
+  
   }, []);
 
   const toggleAvailability = (id) =>
     setAvailability((slots) =>
-      slots.map((slot) => (slot.id === id ? { ...slot, available: !slot.available } : slot))
+      slots.map((slot) =>
+        slot.id === id ? { ...slot, available: !slot.available } : slot
+      )
     );
 
   const updateBooking = (id, status) =>
@@ -47,54 +49,66 @@ export default function TherapistDashboard() {
     );
 
   return (
-    <div className="space-y-6">
-      {/* Tabs */}
-      <div className="flex gap-2">
-        {["profile", "availability", "bookings"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              activeTab === tab
-                ? "bg-green-500 text-white"
-                : "bg-gray-200 text-gray-800 hover:bg-green-100"
-            }`}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
+    <div
+      className="min-h-screen bg-cover bg-center p-6"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold text-white drop-shadow-lg">Therapist Dashboard</h1>
 
-      {/* Content */}
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-        {/* Profile Tab */}
-        {activeTab === "profile" && (
-          <div className="bg-white p-6 rounded-2xl shadow space-y-3">
-            <h2 className="text-2xl font-semibold mb-2">Profile</h2>
-            <p><b>Name:</b> {profile.name}</p>
-            <p><b>Email:</b> {profile.email}</p>
-            <p><b>Phone:</b> {profile.phone}</p>
-            <p><b>Gender:</b> {profile.gender}</p>
-          </div>
-        )}
+        {/* Tabs */}
+        <div className="flex gap-2">
+          {["profile", "availability", "bookings"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                activeTab === tab
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-200/30 text-white hover:bg-green-100/30"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
 
-        {/* Availability Tab */}
-        {activeTab === "availability" && (
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Availability</h2>
-              <button onClick={addSlot} className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">
-                Add Slot
-              </button>
+        {/* Content */}
+        <div className="grid grid-cols-1 gap-6">
+          {/* Profile */}
+          {activeTab === "profile" && (
+            <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-6 shadow-lg text-white space-y-2">
+              <h2 className="text-2xl font-semibold">Profile</h2>
+              <p><b>Name:</b> {profile.name}</p>
+              <p><b>Email:</b> {profile.email}</p>
+              <p><b>Phone:</b> {profile.phone}</p>
+              <p><b>Gender:</b> {profile.gender}</p>
+              <p><b>Specialty:</b> {profile.specialty}</p>
             </div>
-            <div className="space-y-2">
+          )}
+
+          {/* Availability */}
+          {activeTab === "availability" && (
+            <div className="glass-container overflow-hidden p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-white">Availability</h2>
+                <button
+                  onClick={addSlot}
+                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                >
+                  Add Slot
+                </button>
+              </div>
               {availability.map((a) => (
-                <div key={a.id} className="flex justify-between items-center p-3 border rounded-lg">
+                <div
+                  key={a.id}
+                  className="flex justify-between items-center p-3 border border-white/20 rounded-lg mb-2"
+                >
                   <span>{a.date} - {a.time}</span>
                   <button
                     onClick={() => toggleAvailability(a.id)}
                     className={`px-3 py-1 rounded text-sm font-medium ${
-                      a.available ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                      a.available ? "bg-green-100/30 text-green-200" : "bg-red-100/30 text-red-200"
                     } hover:opacity-80`}
                   >
                     {a.available ? "Available" : "Unavailable"}
@@ -102,30 +116,32 @@ export default function TherapistDashboard() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Bookings Tab */}
-        {activeTab === "bookings" && (
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h2 className="text-xl font-semibold mb-4">Bookings</h2>
-            <div className="space-y-3">
+          {/* Bookings */}
+          {activeTab === "bookings" && (
+            <div className="glass-container overflow-hidden p-4">
+              <h2 className="text-xl font-semibold text-white mb-4">Bookings</h2>
               {bookings.map((b) => (
-                <div key={b.id} className="border rounded-lg p-3 flex flex-col gap-2">
+                <div key={b.id} className="border border-white/20 rounded-lg p-3 mb-2 flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <span>{b.client} • {b.date} {b.time}</span>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      b.status === "confirmed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                    }`}>
-                      {b.status}
-                    </span>
+                    <span className={`px-2 py-1 text-xs rounded ${
+                      b.status==="confirmed" ? "bg-green-100/30 text-green-200" : "bg-yellow-100/30 text-yellow-200"
+                    }`}>{b.status}</span>
                   </div>
                   {b.status === "pending" && (
                     <div className="flex gap-2 mt-2">
-                      <button onClick={() => updateBooking(b.id, "confirmed")} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+                      <button
+                        onClick={() => updateBooking(b.id, "confirmed")}
+                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                      >
                         Confirm
                       </button>
-                      <button onClick={() => updateBooking(b.id, "cancelled")} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
+                      <button
+                        onClick={() => updateBooking(b.id, "cancelled")}
+                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                      >
                         Cancel
                       </button>
                     </div>
@@ -133,8 +149,8 @@ export default function TherapistDashboard() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

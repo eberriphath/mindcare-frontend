@@ -57,7 +57,7 @@ const Portal = () => {
                   : "bg-purple-600 hover:bg-purple-700"
               }`}
             >
-              {role.charAt(0).toUpperCase() + role.slice(1)} Dashboard
+              {role.charAt(0).toUpperCase() + role.slice(1)}
             </button>
           ))}
         </div>

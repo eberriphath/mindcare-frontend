@@ -4,7 +4,7 @@ import backgroundImage from "../assets/background.png";
 
 const useMock = true;
 
-export default function TherapistDashboard() {
+function TherapistDashboard() {
   const [profile, setProfile] = useState(null);
   const [availability, setAvailability] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -155,3 +155,5 @@ export default function TherapistDashboard() {
     </div>
   );
 }
+
+export default TherapistDashboard

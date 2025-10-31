@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext"; // ✅ import your auth context
 
-export default function MoodTracker() {
+function MoodTracker() {
+  const { user } = useAuth(); // ✅ get logged-in user
   const [entries, setEntries] = useState([]);
   const [mood, setMood] = useState("😊");
   const [journal, setJournal] = useState("");
   const [editingId, setEditingId] = useState(null);
 
-  const apiUrl = "/api/moods";
+  const apiUrl = "/api/mood";
 
   const fetchEntries = async () => {
+    if (!user?.id) return;
     try {
-      const res = await fetch(apiUrl);
+      const res = await fetch(`${apiUrl}/user/${user.id}`);
       const data = await res.json();
       setEntries(data);
     } catch (err) {
@@ -20,18 +23,25 @@ export default function MoodTracker() {
 
   useEffect(() => {
     fetchEntries();
-  }, []);
+  }, [user]);
 
   const saveEntry = async (e) => {
     e.preventDefault();
     try {
       const method = editingId ? "PUT" : "POST";
       const url = editingId ? `${apiUrl}/${editingId}` : apiUrl;
+      const body = JSON.stringify({
+        user_id: user.id, // ✅ include the user ID
+        mood,
+        journal,
+      });
+
       await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mood, journal }),
+        body,
       });
+
       setMood("😊");
       setJournal("");
       setEditingId(null);
@@ -82,7 +92,7 @@ export default function MoodTracker() {
         >
           <div>
             <div className="text-xl">{entry.mood}</div>
-            <div className="text-gray-300">{entry.journal}</div>
+            <div className="text-gray-700">{entry.journal}</div>
             <div className="text-sm text-gray-400">
               {new Date(entry.date).toLocaleString()}
             </div>
@@ -94,7 +104,7 @@ export default function MoodTracker() {
                 setMood(entry.mood);
                 setJournal(entry.journal);
               }}
-              className="text-blue-400 text-sm"
+              className="text-blue-500 text-sm"
             >
               Edit
             </button>
@@ -110,3 +120,5 @@ export default function MoodTracker() {
     </div>
   );
 }
+
+export default  MoodTracker;

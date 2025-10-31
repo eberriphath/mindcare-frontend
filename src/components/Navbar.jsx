@@ -15,12 +15,7 @@ function Navbar() {
       </Link>
 
       <div className="space-x-4 flex items-center">
-        <Link
-          to="/"
-          className="text-white/90 hover:text-green-300 transition font-medium"
-        >
-          Home
-        </Link>
+      
 
         <Link
           to="/about"
@@ -63,12 +58,9 @@ function Navbar() {
             </button>
           </>
         ) : (
-          <Link
-            to="/login"
-            className="bg-green-500/90 hover:bg-green-400 text-white font-medium px-4 py-1.5 rounded-lg shadow-md transition"
-          >
-            Login
-          </Link>
+          < >
+            
+          </>
         )}
       </div>
     </nav>

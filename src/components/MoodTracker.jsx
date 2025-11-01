@@ -51,7 +51,7 @@ export default function MoodTracker() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-white">
       <form onSubmit={saveEntry} className="flex flex-col gap-2">
         <div>
           <label>Mood: </label>
@@ -67,7 +67,7 @@ export default function MoodTracker() {
           placeholder="Write your journal..."
           value={journal}
           onChange={(e) => setJournal(e.target.value)}
-          className="border rounded p-2 text-black"
+          className="border rounded p-2 text-black w-full"
           required
         />
         <button className="bg-green-500 text-white py-2 rounded">
@@ -75,38 +75,40 @@ export default function MoodTracker() {
         </button>
       </form>
 
-      {entries.map((entry) => (
-        <div
-          key={entry.id}
-          className="border rounded p-3 flex justify-between items-start"
-        >
-          <div>
-            <div className="text-xl">{entry.mood}</div>
-            <div className="text-gray-300">{entry.journal}</div>
-            <div className="text-sm text-gray-400">
-              {new Date(entry.date).toLocaleString()}
+      <div className="space-y-4">
+        {entries.map((entry) => (
+          <div
+            key={entry.id}
+            className="border rounded p-3 flex justify-between items-start"
+          >
+            <div>
+              <div className="text-xl">{entry.mood}</div>
+              <div className="text-gray-300">{entry.journal}</div>
+              <div className="text-sm text-gray-400">
+                {new Date(entry.date).toLocaleString()}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <button
+                onClick={() => {
+                  setEditingId(entry.id);
+                  setMood(entry.mood);
+                  setJournal(entry.journal);
+                }}
+                className="text-blue-400 text-sm"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => deleteEntry(entry.id)}
+                className="text-red-500 text-sm"
+              >
+                Delete
+              </button>
             </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <button
-              onClick={() => {
-                setEditingId(entry.id);
-                setMood(entry.mood);
-                setJournal(entry.journal);
-              }}
-              className="text-blue-400 text-sm"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => deleteEntry(entry.id)}
-              className="text-red-500 text-sm"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

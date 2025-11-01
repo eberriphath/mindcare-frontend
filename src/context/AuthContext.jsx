@@ -1,57 +1,79 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from "react";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
+  // Load stored user
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
 
-        if (token && storedUser) {
-            try {
-                setUser(JSON.parse(storedUser));
-            } catch (error) {
-                console.error('Error parsing stored user data:', error);
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-            }
-        }
-        setLoading(false);
-    }, []);
-
-    const login = (userData, token) => {
-        setUser(userData);
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-    };
-
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-    };
-
-    const updateUser = (newUserData) => {
-        setUser(prevUser => ({ ...prevUser, ...newUserData }));
-        localStorage.setItem('user', JSON.stringify({ ...user, ...newUserData }));
-    };
-
-    return (
-        <AuthContext.Provider value={{ user, login, logout, updateUser, loading }}>
-            {!loading && children}
-        </AuthContext.Provider>
-    );
-};
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+    if (token && storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (err) {
+        console.error("Error parsing stored user:", err);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     }
-    return context;
-};
 
-export default AuthContext;
+    setLoading(false);
+  }, []);
+
+  // --- TEMPORARY TESTING (simulate different roles) ---
+  useEffect(() => {
+    // Uncomment ONE to test:
+    // setUser({ name: "Admin Tester", role: "admin" });
+    // setUser({ name: "Therapist Tester", role: "therapist" });
+    // setUser({ name: "Client Tester", role: "client" });
+     setLoading(false);
+  }, []);
+  // ---------------------------------------------------
+
+  const login = (userData, token) => {
+    const finalUser = {
+      ...userData,
+      role: userData.role || "client", // default fallback
+    };
+    setUser(finalUser);
+    localStorage.setItem("user", JSON.stringify(finalUser));
+    if (token) localStorage.setItem("token", token);
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  };
+
+  const updateUser = (newUserData) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...newUserData };
+      localStorage.setItem("user", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const value = { user, login, logout, updateUser, loading };
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-500"></div>
+      </div>
+    );
+
+  return (
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
+}

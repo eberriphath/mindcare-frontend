@@ -1,94 +1,190 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  mockAdminProfile,
+  mockTherapistList,
+  mockClientList,
+  mockReports,
+} from "../mockData";
 
-function AdminDashboard() {
-  const [users, setUsers] = useState([
-    { id: 1, name: "John i john i", email: "you@example.com", role: "client" },
-    { id: 2, name: "Dr. dr", email: "me@example.com", role: "therapist" },
-  ]);
+const useMock = true;
 
-  const [sessions, setSessions] = useState([
-    { id: 1, client: "John knee", therapist: "Dr. daktari", date: "2024-01-15", status: "completed" },
-  ]);
+export default function AdminDashboard() {
+  const [profile, setProfile] = useState(null);
+  const [therapists, setTherapists] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const addUser = () => {
-    const id = Date.now();
-    setUsers([{ id, name: `New User ${id % 1000}`, email: `user${id % 1000}@x.com`, role: "client" }, ...users]);
-  };
+  useEffect(() => {
+    if (useMock) {
+      setProfile(mockAdminProfile);
+      setTherapists(mockTherapistList);
+      setClients(mockClientList);
+      setReports(mockReports);
+      setLoading(false);
+    }
+  }, []);
 
-  const remove = (setter) => (id) => setter((prev) => prev.filter((i) => i.id !== id));
-  const removeUser = remove(setUsers);
-  const removeSession = remove(setSessions);
-
-  return (
-    <div
-      className="min-h-screen bg-cover bg-center p-6"
-      style={{ backgroundImage: "url('/assets/background.png')" }}
-    >
-      <div className="max-w-6xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold text-white text-center">Admin Dashboard</h1>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card label="Total Users" value={users.length} />
-          <Card label="Therapists" value={users.filter((u) => u.role === "therapist").length} />
-          <Card label="Sessions" value={sessions.length} />
-        </div>
-
-        {/* Users table */}
-        <div className="bg-white/20 backdrop-blur-md border rounded-lg shadow-sm overflow-hidden text-white">
-          <div className="flex items-center justify-between px-4 py-3 border-b">
-            <h2 className="font-semibold">Users</h2>
-            <button onClick={addUser} className="text-sm bg-indigo-600 text-white px-3 py-1 rounded">
-              Add User
-            </button>
-          </div>
-          <table className="w-full text-sm">
-            <thead className="bg-white/10 text-xs uppercase text-gray-200">
-              <tr>
-                <th className="p-3 text-left">Name</th>
-                <th className="p-3 text-left">Email</th>
-                <th className="p-3">Role</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
-                <tr key={u.id} className="border-t hover:bg-white/20">
-                  <td className="p-3">{u.name}</td>
-                  <td className="p-3">{u.email}</td>
-                  <td className="p-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded ${
-                        u.role === "therapist" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
-                      }`}
-                    >
-                      {u.role}
-                    </span>
-                  </td>
-                  <td className="p-3">
-                    <button onClick={() => alert(`Edit ${u.name}`)} className="text-indigo-600 mr-3">
-                      Edit
-                    </button>
-                    <button onClick={() => removeUser(u.id)} className="text-red-600">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-500"></div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-function Card({ label, value }) {
   return (
-    <div className="bg-white/20 backdrop-blur-md border rounded-lg p-4 shadow-sm text-white">
-      <div className="text-sm text-gray-200">{label}</div>
-      <div className="text-2xl font-semibold mt-1">{value}</div>
+    <div className="space-y-6 text-gray-800">
+      {/* Tabs */}
+      <div className="flex justify-center gap-3">
+        {["overview", "therapists", "clients", "reports", "settings"].map(
+          (tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                activeTab === tab
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-green-100"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          )
+        )}
+      </div>
+
+      {/* Overview Tab */}
+      {activeTab === "overview" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-3">
+          <h2 className="text-2xl font-semibold mb-2">Admin Overview</h2>
+          <p>
+            Welcome back, <b>{profile.name}</b> 👋
+          </p>
+          <div className="grid md:grid-cols-3 gap-4 mt-4">
+            <div className="p-4 border rounded-xl text-center bg-green-50">
+              <h3 className="text-2xl font-bold text-green-600">
+                {therapists.length}
+              </h3>
+              <p>Therapists Registered</p>
+            </div>
+            <div className="p-4 border rounded-xl text-center bg-blue-50">
+              <h3 className="text-2xl font-bold text-blue-600">
+                {clients.length}
+              </h3>
+              <p>Clients Registered</p>
+            </div>
+            <div className="p-4 border rounded-xl text-center bg-yellow-50">
+              <h3 className="text-2xl font-bold text-yellow-600">
+                {reports.length}
+              </h3>
+              <p>Reports Logged</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Therapists Tab */}
+      {activeTab === "therapists" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+          <h2 className="text-2xl font-semibold">Therapist Management</h2>
+          {therapists.length === 0 ? (
+            <p className="text-gray-500">No therapists available.</p>
+          ) : (
+            therapists.map((t) => (
+              <div
+                key={t.id}
+                className="flex justify-between p-3 border border-gray-200 rounded-lg items-center"
+              >
+                <div>
+                  <p>
+                    <b>{t.name}</b> — {t.specialization}
+                  </p>
+                  <p className="text-sm text-gray-500">{t.email}</p>
+                </div>
+                <span
+                  className={`px-2 py-1 text-xs rounded ${
+                    t.active
+                      ? "bg-green-100 text-green-600"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                >
+                  {t.active ? "Active" : "Inactive"}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Clients Tab */}
+      {activeTab === "clients" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+          <h2 className="text-2xl font-semibold">Client Management</h2>
+          {clients.length === 0 ? (
+            <p className="text-gray-500">No clients registered yet.</p>
+          ) : (
+            clients.map((c) => (
+              <div
+                key={c.id}
+                className="flex justify-between p-3 border border-gray-200 rounded-lg items-center"
+              >
+                <div>
+                  <p>
+                    <b>{c.name}</b> — {c.gender}
+                  </p>
+                  <p className="text-sm text-gray-500">{c.email}</p>
+                </div>
+                <span className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-600">
+                  {c.sessions} sessions
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Reports Tab */}
+      {activeTab === "reports" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+          <h2 className="text-2xl font-semibold">Reports</h2>
+          {reports.length === 0 ? (
+            <p className="text-gray-500">No reports found.</p>
+          ) : (
+            reports.map((r) => (
+              <div
+                key={r.id}
+                className="border border-gray-200 rounded-lg p-3 space-y-1"
+              >
+                <p>
+                  <b>Reporter:</b> {r.reporter}
+                </p>
+                <p>
+                  <b>Issue:</b> {r.issue}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Date: {r.date}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Settings Tab */}
+      {activeTab === "settings" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+          <h2 className="text-2xl font-semibold">Admin Settings</h2>
+          <p>
+            Email: <b>{profile.email}</b>
+          </p>
+          <p>Role: <b>{profile.role}</b></p>
+          <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+            Log Out
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-
-export default AdminDashboard;

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { mockTherapistProfile, mockTherapistAvailability, mockTherapistBookings } from "../mockData";
-import backgroundImage from "../assets/background.png";
 
 const useMock = true;
 
@@ -10,148 +9,201 @@ export default function TherapistDashboard() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
+  const [editMode, setEditMode] = useState(false);
+  const [tempProfile, setTempProfile] = useState({});
 
   useEffect(() => {
     if (useMock) {
       setProfile(mockTherapistProfile);
+      setTempProfile(mockTherapistProfile);
       setAvailability(mockTherapistAvailability);
       setBookings(mockTherapistBookings);
       setLoading(false);
-      return;
     }
-
-  
   }, []);
 
-  const toggleAvailability = (id) =>
-    setAvailability((slots) =>
-      slots.map((slot) =>
-        slot.id === id ? { ...slot, available: !slot.available } : slot
+  const handleChange = (e) =>
+    setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
+
+  const handleSave = () => {
+    setProfile(tempProfile);
+    setEditMode(false);
+  };
+
+  const handleAddAvailability = () => {
+    const newSlot = {
+      id: Date.now(),
+      date: new Date().toISOString().split("T")[0],
+      time: "09:00 AM - 05:00 PM",
+    };
+    setAvailability((prev) => [newSlot, ...prev]);
+  };
+
+  const handleCancelBooking = (id) => {
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === id ? { ...b, status: "cancelled" } : b
       )
     );
+  };
 
-  const updateBooking = (id, status) =>
-    setBookings((bks) =>
-      bks.map((b) => (b.id === id ? { ...b, status } : b))
-    );
-
-  const addSlot = () =>
-    setAvailability((slots) => [
-      { id: Date.now(), date: "2024-02-01", time: "11:00", available: true },
-      ...slots,
-    ]);
-
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-500"></div>
       </div>
     );
+  }
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center p-6"
-      style={{ backgroundImage: `url(${backgroundImage})` }}
-    >
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-white drop-shadow-lg">Therapist Dashboard</h1>
+    <div className="space-y-6 text-gray-800">
+      {/* Tabs */}
+      <div className="flex justify-center gap-3">
+        {["profile", "availability", "bookings"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded-lg font-medium transition ${
+              activeTab === tab
+                ? "bg-green-500 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-green-100"
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2">
-          {["profile", "availability", "bookings"].map((tab) => (
+      {/* Profile Tab */}
+      {activeTab === "profile" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold">Profile</h2>
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                activeTab === tab
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-200/30 text-white hover:bg-green-100/30"
-              }`}
+              className="bg-green-500 px-3 py-1 rounded text-white text-sm"
+              onClick={() => setEditMode(!editMode)}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {editMode ? "Cancel" : "Edit"}
             </button>
-          ))}
-        </div>
+          </div>
 
-        {/* Content */}
-        <div className="grid grid-cols-1 gap-6">
-          {/* Profile */}
-          {activeTab === "profile" && (
-            <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-6 shadow-lg text-white space-y-2">
-              <h2 className="text-2xl font-semibold">Profile</h2>
+          {editMode ? (
+            <div className="space-y-3">
+              <input
+                type="text"
+                name="name"
+                value={tempProfile.name}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                placeholder="Name"
+              />
+              <input
+                type="email"
+                name="email"
+                value={tempProfile.email}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                placeholder="Email"
+              />
+              <input
+                type="text"
+                name="specialization"
+                value={tempProfile.specialization}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                placeholder="Specialization"
+              />
+              <button
+                onClick={handleSave}
+                className="bg-blue-500 px-4 py-2 rounded text-white mt-2"
+              >
+                Save
+              </button>
+            </div>
+          ) : (
+            <div>
               <p><b>Name:</b> {profile.name}</p>
               <p><b>Email:</b> {profile.email}</p>
-              <p><b>Phone:</b> {profile.phone}</p>
-              <p><b>Gender:</b> {profile.gender}</p>
-              <p><b>Specialty:</b> {profile.specialty}</p>
-            </div>
-          )}
-
-          {/* Availability */}
-          {activeTab === "availability" && (
-            <div className="glass-container overflow-hidden p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-white">Availability</h2>
-                <button
-                  onClick={addSlot}
-                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                >
-                  Add Slot
-                </button>
-              </div>
-              {availability.map((a) => (
-                <div
-                  key={a.id}
-                  className="flex justify-between items-center p-3 border border-white/20 rounded-lg mb-2"
-                >
-                  <span>{a.date} - {a.time}</span>
-                  <button
-                    onClick={() => toggleAvailability(a.id)}
-                    className={`px-3 py-1 rounded text-sm font-medium ${
-                      a.available ? "bg-green-100/30 text-green-200" : "bg-red-100/30 text-red-200"
-                    } hover:opacity-80`}
-                  >
-                    {a.available ? "Available" : "Unavailable"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Bookings */}
-          {activeTab === "bookings" && (
-            <div className="glass-container overflow-hidden p-4">
-              <h2 className="text-xl font-semibold text-white mb-4">Bookings</h2>
-              {bookings.map((b) => (
-                <div key={b.id} className="border border-white/20 rounded-lg p-3 mb-2 flex flex-col gap-2">
-                  <div className="flex justify-between items-center">
-                    <span>{b.client} • {b.date} {b.time}</span>
-                    <span className={`px-2 py-1 text-xs rounded ${
-                      b.status==="confirmed" ? "bg-green-100/30 text-green-200" : "bg-yellow-100/30 text-yellow-200"
-                    }`}>{b.status}</span>
-                  </div>
-                  {b.status === "pending" && (
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={() => updateBooking(b.id, "confirmed")}
-                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={() => updateBooking(b.id, "cancelled")}
-                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
+              <p><b>Specialization:</b> {profile.specialization}</p>
+              <p><b>Experience:</b> {profile.experience} years</p>
             </div>
           )}
         </div>
-      </div>
+      )}
+
+      {/* Availability Tab */}
+      {activeTab === "availability" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+          <h2 className="text-2xl font-semibold mb-2">Availability</h2>
+          <button
+            onClick={handleAddAvailability}
+            className="bg-green-500 px-4 py-2 rounded text-white mb-3"
+          >
+            Add Availability
+          </button>
+
+          {availability.length === 0 ? (
+            <p className="text-gray-500">No available slots yet.</p>
+          ) : (
+            availability.map((slot) => (
+              <div
+                key={slot.id}
+                className="p-3 border border-gray-200 rounded-lg flex justify-between"
+              >
+                <span>
+                  <b>Date:</b> {slot.date} • <b>Time:</b> {slot.time}
+                </span>
+                <span className="text-green-600 font-medium">Available</span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Bookings Tab */}
+      {activeTab === "bookings" && (
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+          <h2 className="text-2xl font-semibold mb-2">Bookings</h2>
+          {bookings.length === 0 ? (
+            <p className="text-gray-500">No bookings yet.</p>
+          ) : (
+            bookings.map((b) => (
+              <div
+                key={b.id}
+                className="flex justify-between p-3 border border-gray-200 rounded-lg items-center"
+              >
+                <div>
+                  <p><b>Client:</b> {b.client}</p>
+                  <p>
+                    <b>Date:</b> {b.date} • <b>Time:</b> {b.time}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-2 py-1 text-xs rounded ${
+                      b.status === "completed"
+                        ? "bg-green-100 text-green-600"
+                        : b.status === "pending"
+                        ? "bg-yellow-100 text-yellow-600"
+                        : "bg-red-100 text-red-600"
+                    }`}
+                  >
+                    {b.status}
+                  </span>
+                  {b.status === "pending" && (
+                    <button
+                      onClick={() => handleCancelBooking(b.id)}
+                      className="px-2 py-1 text-xs bg-red-500 rounded text-white hover:bg-red-600"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }

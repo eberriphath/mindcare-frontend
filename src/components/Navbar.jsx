@@ -8,7 +8,7 @@ function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/20 backdrop-blur-xl border-b border-white/30 shadow-sm p-4 flex justify-between items-center">
       <Link
-        to="/home"
+        to="/portal"
         className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-500 drop-shadow-md"
       >
         MindCare
@@ -19,7 +19,7 @@ function Navbar() {
           to="/"
           className="text-white/90 hover:text-green-300 transition font-medium"
         >
-          Home
+          Logout
         </Link>
 
         <Link
@@ -63,12 +63,8 @@ function Navbar() {
             </button>
           </>
         ) : (
-          <Link
-            to="/login"
-            className="bg-green-500/90 hover:bg-green-400 text-white font-medium px-4 py-1.5 rounded-lg shadow-md transition"
-          >
-            Login
-          </Link>
+          <>
+          </>
         )}
       </div>
     </nav>

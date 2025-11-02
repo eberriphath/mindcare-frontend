@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/background.png";
 
 const API_URL = "http://127.0.0.1:5000/auth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
-  const [isLogin, setIsLogin] = useState(true);
+  // Role passed from portal
+  const selectedRole = location.state?.selectedRole || null;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,40 +23,32 @@ const Login = () => {
     setIsLoading(true);
     setMessage("");
 
-    const endpoint = isLogin ? "/login" : "/register";
-    const payload = isLogin
-      ? { email, password }
-      : { full_name: fullName, email, password };
+    const payload = { email, password };
+    if (selectedRole) payload.role = selectedRole;
 
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       const data = await response.json();
-      console.log("Server Response:", data);
 
       if (response.ok) {
-        if (isLogin) {
-          login(data.user, data.access_token);
-          setMessage("✅ Login successful! Redirecting...");
+        login(data.user, data.access_token);
+        setMessage("Login successful!");
 
-          setTimeout(() => navigate("/portal"), 1200);
-        } else {
-          setIsLogin(true);
-          setFullName("");
-          setEmail("");
-          setPassword("");
-          setMessage("✅ Registration successful! Please log in.");
-        }
+        setTimeout(() => {
+          if (selectedRole) navigate(`/portal/${selectedRole}`);
+          else navigate("/portal");
+        }, 1000);
       } else {
-        setMessage(data.error || data.message || "⚠️ Something went wrong.");
+        setMessage(data.error || "Invalid credentials.");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("⚠️ Unable to connect to server. Please try again later.");
+    } catch (err) {
+      setMessage("Server error. Try again later.");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -63,80 +56,49 @@ const Login = () => {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center relative"
+      className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-black/40"></div>
 
-      <div className="absolute top-0 left-0 w-full z-20">
-        <Navbar />
-      </div>
-
-      <div className="relative z-10 w-full max-w-md bg-white/20 backdrop-blur-2xl rounded-2xl shadow-2xl p-8 border border-white/30 mt-24">
-        <h2 className="text-2xl font-semibold text-center mb-6 text-white drop-shadow-lg">
-          {isLogin ? "Login to MindCare" : "Create Your MindCare Account"}
+      <form
+        onSubmit={handleSubmit}
+        className="relative z-10 p-8 bg-white/20 backdrop-blur-lg rounded-lg max-w-md w-full"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-white">
+          {selectedRole
+            ? `Login as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`
+            : "Login to MindCare"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {!isLogin && (
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
-              required
-            />
-          )}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
+        />
 
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
-            required
-          />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
+        />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
-            required
-          />
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-2 bg-green-600 hover:bg-green-700 rounded text-white font-semibold"
+        >
+          {isLoading ? "Processing..." : "Login"}
+        </button>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full py-3 rounded-lg bg-green-500/80 text-white font-semibold transition duration-200 shadow-md ${
-              isLoading
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-green-500 hover:shadow-lg"
-            }`}
-          >
-            {isLoading ? "Processing..." : isLogin ? "Login" : "Register"}
-          </button>
-        </form>
-
-        {message && (
-          <p className="text-center text-sm text-gray-200 mt-4">{message}</p>
-        )}
-
-        <p className="text-center text-gray-300 mt-6">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setMessage("");
-            }}
-            className="text-green-300 font-semibold hover:underline"
-          >
-            {isLogin ? "Register" : "Login"}
-          </button>
-        </p>
-      </div>
+        {message && <p className="text-red-400 mt-3">{message}</p>}
+      </form>
     </div>
   );
 };

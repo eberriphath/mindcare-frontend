@@ -18,6 +18,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import Navbar from "./components/Navbar";
 
 import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // ✅ Hide Navbar on dashboard pages
 function LayoutWithNavbar({ children }) {
@@ -42,12 +43,44 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/portal" element={<Portal />} />
 
-      {/* 💼 Dashboards */}
-      <Route path="/portal/client" element={<ClientDashboard />} />
-      <Route path="/portal/therapist" element={<TherapistDashboard />} />
-      <Route path="/portal/admin" element={<AdminDashboard />} />
+      {/* 🚪 Protected Portal */}
+      <Route
+        path="/portal"
+        element={
+          <ProtectedRoute>
+            <Portal />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 💼 Dashboards with role-based access */}
+      <Route
+        path="/portal/client"
+        element={
+          <ProtectedRoute allowedRoles={["client", "user"]}>
+            <ClientDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/portal/therapist"
+        element={
+          <ProtectedRoute allowedRoles={["therapist"]}>
+            <TherapistDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/portal/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
 
       {/* ❌ 404 Fallback */}
       <Route

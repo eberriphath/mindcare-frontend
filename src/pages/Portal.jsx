@@ -1,46 +1,42 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../assets/background.png";
 
-export default function Portal() {
+const Portal = () => {
   const navigate = useNavigate();
 
-  const goToDashboard = (path) => {
-    navigate(path);
+  const handleRoleSelect = (role) => {
+    navigate("/login", { state: { selectedRole: role } });
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center text-white"
-      style={{ backgroundImage: `url(${backgroundImage})` }}
-    >
-      <div className="bg-black/70 p-8 rounded-2xl shadow-xl w-96 text-center backdrop-blur-md">
-        <h1 className="text-3xl font-bold mb-6">MindCare Portal</h1>
-        <p className="text-gray-300 mb-6">Choose a dashboard to explore</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-800 to-indigo-700 text-white">
+      <h1 className="text-4xl font-bold mb-8">Welcome to MindCare Portal</h1>
+      <p className="mb-6 text-lg">Choose your role to log in:</p>
 
-        <div className="space-y-4">
-          <button
-            onClick={() => goToDashboard("/portal/client")}
-            className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold"
-          >
-            Client Dashboard
-          </button>
+      <div className="flex flex-col gap-4 w-72">
+        <button
+          onClick={() => handleRoleSelect("client")}
+          className="bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold"
+        >
+          Client
+        </button>
 
-          <button
-            onClick={() => goToDashboard("/portal/therapist")}
-            className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
-          >
-            Therapist Dashboard
-          </button>
+        <button
+          onClick={() => handleRoleSelect("therapist")}
+          className="bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-semibold"
+        >
+          Therapist
+        </button>
 
-          <button
-            onClick={() => goToDashboard("/portal/admin")}
-            className="w-full py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold"
-          >
-            Admin Dashboard
-          </button>
-        </div>
+        <button
+          onClick={() => handleRoleSelect("admin")}
+          className="bg-purple-600 hover:bg-purple-700 py-3 rounded-lg font-semibold"
+        >
+          Admin
+        </button>
       </div>
     </div>
   );
-}
+};
+
+export default Portal;

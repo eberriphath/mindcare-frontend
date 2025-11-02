@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   mockAdminProfile,
   mockTherapistList,
@@ -9,6 +10,7 @@ import {
 const useMock = true;
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [therapists, setTherapists] = useState([]);
   const [clients, setClients] = useState([]);
@@ -16,6 +18,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
+  // ✅ Load mock data
   useEffect(() => {
     if (useMock) {
       setProfile(mockAdminProfile);
@@ -26,6 +29,12 @@ export default function AdminDashboard() {
     }
   }, []);
 
+  // ✅ Logout function
+  const logout = () => {
+    localStorage.clear();
+    navigate("/portal");
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -35,7 +44,18 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6 text-gray-800">
+    <div className="min-h-screen bg-gray-50 p-6 space-y-6 text-gray-800">
+      {/* Header */}
+      <div className="flex justify-between items-center bg-white shadow p-4 rounded-2xl">
+        <h1 className="text-3xl font-bold text-green-600">🛡️ Admin Dashboard</h1>
+        <button
+          onClick={logout}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+        >
+          Logout
+        </button>
+      </div>
+
       {/* Tabs */}
       <div className="flex justify-center gap-3">
         {["overview", "therapists", "clients", "reports", "settings"].map(
@@ -163,9 +183,7 @@ export default function AdminDashboard() {
                 <p>
                   <b>Issue:</b> {r.issue}
                 </p>
-                <p className="text-sm text-gray-500">
-                  Date: {r.date}
-                </p>
+                <p className="text-sm text-gray-500">Date: {r.date}</p>
               </div>
             ))
           )}
@@ -179,8 +197,13 @@ export default function AdminDashboard() {
           <p>
             Email: <b>{profile.email}</b>
           </p>
-          <p>Role: <b>{profile.role}</b></p>
-          <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+          <p>
+            Role: <b>{profile.role}</b>
+          </p>
+          <button
+            onClick={logout}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
             Log Out
           </button>
         </div>

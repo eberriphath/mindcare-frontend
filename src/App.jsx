@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Login from "./pages/login";
 import Portal from "./pages/Portal";
+import Contact from "./pages/Contact";
 
 import ClientDashboard from "./components/ClientDashboard";
 import TherapistDashboard from "./components/TherapistDashboard";
@@ -43,6 +44,8 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/contact" element={<Contact />} />
+
 
       {/* 🚪 Protected Portal */}
       <Route

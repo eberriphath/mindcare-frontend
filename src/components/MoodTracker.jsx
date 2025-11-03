@@ -1,103 +1,66 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
-export default function MoodTracker() {
+export default function MoodTrackerMock() {
   const [entries, setEntries] = useState([]);
   const [mood, setMood] = useState("😊");
   const [journal, setJournal] = useState("");
   const [editingId, setEditingId] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
-  const apiUrl = "http://localhost:3000/moods"; // or your backend endpoint
-
-  // 🧩 Only clients can access
+  // 🧪 Mock initial data
   useEffect(() => {
-    if (role !== "client") {
-      alert("Access denied 🚫 — Only clients can use the Mood Tracker.");
-      navigate("/portal");
-    } else {
-      fetchEntries();
-    }
-  }, [navigate, role]);
-
-  // 📦 Fetch mood entries
-  const fetchEntries = async () => {
-    try {
-      const res = await fetch(apiUrl, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setEntries(data);
-    } catch (err) {
-      console.error("Failed to fetch moods:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const mockData = [
+      {
+        id: 1,
+        mood: "😊",
+        journal: "Had a great morning!",
+        date: new Date().toISOString(),
+      },
+      {
+        id: 2,
+        mood: "😢",
+        journal: "Feeling a bit down today.",
+        date: new Date().toISOString(),
+      },
+    ];
+    setEntries(mockData);
+  }, []);
 
   // 💾 Save or update mood entry
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const method = editingId ? "PATCH" : "POST";
-    const url = editingId ? `${apiUrl}/${editingId}` : apiUrl;
-
-    try {
-      await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          mood,
-          journal,
-          date: new Date().toISOString(),
-        }),
-      });
-      setMood("😊");
-      setJournal("");
+    if (editingId) {
+      setEntries((prev) =>
+        prev.map((entry) =>
+          entry.id === editingId
+            ? { ...entry, mood, journal, date: new Date().toISOString() }
+            : entry
+        )
+      );
       setEditingId(null);
-      fetchEntries();
-    } catch (err) {
-      console.error("Failed to save mood:", err);
+    } else {
+      const newEntry = {
+        id: entries.length ? entries[entries.length - 1].id + 1 : 1,
+        mood,
+        journal,
+        date: new Date().toISOString(),
+      };
+      setEntries((prev) => [...prev, newEntry]);
     }
+    setMood("😊");
+    setJournal("");
   };
 
   // ❌ Delete entry
-  const deleteEntry = async (id) => {
-    try {
-      await fetch(`${apiUrl}/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchEntries();
-    } catch (err) {
-      console.error("Failed to delete mood:", err);
-    }
+  const deleteEntry = (id) => {
+    setEntries((prev) => prev.filter((entry) => entry.id !== id));
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[50vh] text-gray-300">
-        Loading mood entries...
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-2xl mx-auto bg-white/10 p-6 rounded-2xl text-white shadow-lg space-y-6">
-      <h1 className="text-3xl font-semibold text-center mb-4">
-        🌤️ Mood Tracker
-      </h1>
+      <h1 className="text-3xl font-semibold text-center mb-4">🌤️ Mood Tracker</h1>
 
       {/* 📝 Add/Edit Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white/10 p-4 rounded-xl space-y-3"
-      >
+      <form onSubmit={handleSubmit} className="bg-white/10 p-4 rounded-xl space-y-3">
         <div className="flex items-center gap-3">
           <label className="text-lg font-medium">Mood:</label>
           <select

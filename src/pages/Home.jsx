@@ -72,7 +72,7 @@ function Home() {
               Encourage Community
             </h3>
             <p className="text-sm text-gray-200">
-              Engage in positive, supportive chat spaces to share and grow
+              Engage in positive, supportive spaces to share and grow
               together.
             </p>
           </div>
@@ -81,7 +81,7 @@ function Home() {
               Automate & Empower
             </h3>
             <p className="text-sm text-gray-200">
-              Receive smart reminders, email updates, and manage therapy easily.
+              Receive smart reminders, updates, and manage therapy easily.
             </p>
           </div>
         </div>
@@ -102,21 +102,21 @@ function Home() {
             <FaBell className="text-green-700 text-3xl mb-3" />
             <h4 className="font-semibold">Booking Reminders</h4>
             <p className="text-sm mt-2 text-gray-700">
-              Get automated email reminders for your upcoming sessions.
+              Get automated reminders for your upcoming sessions.
             </p>
           </div>
           <div className="bg-white/70 p-6 rounded-2xl shadow-lg flex flex-col items-center hover:scale-105 transition">
             <FaMapMarkedAlt className="text-green-700 text-3xl mb-3" />
-            <h4 className="font-semibold">Nearby Centers</h4>
+            <h4 className="font-semibold">Journal</h4>
             <p className="text-sm mt-2 text-gray-700">
-              Locate therapy centers near you using Google Maps API.
+              journal your thoughts at any time
             </p>
           </div>
           <div className="bg-white/70 p-6 rounded-2xl shadow-lg flex flex-col items-center hover:scale-105 transition">
             <FaComments className="text-green-700 text-3xl mb-3" />
-            <h4 className="font-semibold">Townsquare Chat</h4>
+            <h4 className="font-semibold">Mood Tracker</h4>
             <p className="text-sm mt-2 text-gray-700">
-              Join a supportive community chat for encouragement and connection.
+              Track your mood to see progress over time
             </p>
           </div>
         </div>

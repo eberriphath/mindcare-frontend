@@ -3,14 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import backgroundImage from "../assets/background.png";
 
-const BASE_URL = "http://127.0.0.1:5000"; // Flask backend
+const BASE_URL = "http://127.0.0.1:5000";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
 
-  // Role selected previously in Portal or default
   const selectedRole =
     location.state?.selectedRole || localStorage.getItem("role") || "user";
 
@@ -36,14 +35,12 @@ const Login = () => {
     setIsLoading(true);
     setMessage("");
 
-    // Check password match
     if (isRegister && password !== confirmPassword) {
       setMessage("Passwords do not match!");
       setIsLoading(false);
       return;
     }
 
-    // Prepare payload
     const payload = isRegister
       ? { full_name: fullName, email, password, role: selectedRole || "user" }
       : { email, password, role: selectedRole || "user" };
@@ -66,15 +63,12 @@ const Login = () => {
           setMessage("✅ Registered successfully! You can now log in.");
           setIsRegister(false);
         } else {
-          // Save session
           login(data.user, data.access_token);
 
-          // Optional: save role for Portal internal logic
           localStorage.setItem("role", data.user.role);
 
           setMessage("✅ Login successful!");
 
-          // Navigate to /portal (no /user)
           setTimeout(() => {
             navigate("/portal");
           }, 800);

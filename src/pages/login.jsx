@@ -1,21 +1,19 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import backgroundImage from "../assets/background.png";
 
-const BASE_URL = "http://127.0.0.1:5000";
+const BASE_URL = "http://127.0.0.1:5000"; // Flask backend
 
 const Login = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { login } = useAuth();
 
-  const selectedRole =
-    location.state?.selectedRole || localStorage.getItem("role") || "user";
-
+  const [step, setStep] = useState(1); // Step 1: email/name, Step 2: role, Step 3: password
   const [isRegister, setIsRegister] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -23,11 +21,26 @@ const Login = () => {
 
   const toggleMode = () => {
     setIsRegister(!isRegister);
-    setMessage("");
+    setStep(1);
     setFullName("");
     setEmail("");
+    setRole("");
     setPassword("");
     setConfirmPassword("");
+    setMessage("");
+  };
+
+  const handleNextStep = () => {
+    if (step === 1 && (!email || (isRegister && !fullName))) {
+      setMessage("Please fill in your details!");
+      return;
+    }
+    if (step === 2 && !role) {
+      setMessage("Please select a role!");
+      return;
+    }
+    setMessage("");
+    setStep(step + 1);
   };
 
   const handleSubmit = async (e) => {
@@ -42,8 +55,8 @@ const Login = () => {
     }
 
     const payload = isRegister
-      ? { full_name: fullName, email, password, role: selectedRole || "user" }
-      : { email, password, role: selectedRole || "user" };
+      ? { full_name: fullName, email, password, role }
+      : { email, password, role };
 
     const endpoint = isRegister
       ? `${BASE_URL}/auth/register`
@@ -62,15 +75,16 @@ const Login = () => {
         if (isRegister) {
           setMessage("✅ Registered successfully! You can now log in.");
           setIsRegister(false);
+          setStep(1);
         } else {
           login(data.user, data.access_token);
-
-          localStorage.setItem("role", data.user.role);
-
           setMessage("✅ Login successful!");
-
+          localStorage.setItem("role", role);
           setTimeout(() => {
-            navigate("/portal");
+            if (role === "client") navigate("/portal/client");
+            else if (role === "therapist") navigate("/portal/therapist");
+            else if (role === "admin") navigate("/portal/admin");
+            else navigate("/portal");
           }, 800);
         }
       } else {
@@ -96,70 +110,100 @@ const Login = () => {
         className="relative z-10 p-8 bg-white/20 backdrop-blur-lg rounded-lg max-w-md w-full"
       >
         <h2 className="text-2xl font-bold mb-4 text-white text-center">
-          {isRegister
-            ? selectedRole
-              ? `Register as ${selectedRole}`
-              : "Register as User"
-            : selectedRole
-            ? `Login as ${selectedRole}`
-            : "Login as User"}
+          {isRegister ? "Register" : "Login"}
         </h2>
 
-        {isRegister && (
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
-          />
+        {/* Step 1: Name & Email */}
+        {step === 1 && (
+          <>
+            {isRegister && (
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
+              />
+            )}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
+            />
+            <button
+              type="button"
+              onClick={handleNextStep}
+              className="w-full py-2 bg-green-600 hover:bg-green-700 rounded text-white font-semibold"
+            >
+              Next
+            </button>
+          </>
         )}
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
-        />
-
-        {isRegister && (
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
-          />
+        {/* Step 2: Role Selection */}
+        {step === 2 && (
+          <>
+            <p className="text-white mb-4 text-center">Select Your Role</p>
+            <div className="flex justify-between mb-4">
+              {["client", "therapist", "admin"].map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRole(r)}
+                  className={`px-4 py-2 border rounded w-full mx-1 ${
+                    role === r ? "bg-green-600 text-white" : "text-white"
+                  }`}
+                >
+                  {r.charAt(0).toUpperCase() + r.slice(1)}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleNextStep}
+              className="w-full py-2 bg-green-600 hover:bg-green-700 rounded text-white font-semibold"
+            >
+              Next
+            </button>
+          </>
         )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-2 bg-green-600 hover:bg-green-700 rounded text-white font-semibold"
-        >
-          {isLoading
-            ? "Processing..."
-            : isRegister
-            ? "Register"
-            : "Login"}
-        </button>
-
-        {message && (
-          <p className="text-red-300 mt-3 text-center">{message}</p>
+        {/* Step 3: Password */}
+        {step === 3 && (
+          <>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
+            />
+            {isRegister && (
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/70"
+              />
+            )}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-2 bg-green-600 hover:bg-green-700 rounded text-white font-semibold"
+            >
+              {isLoading ? "Processing..." : isRegister ? "Register" : "Login"}
+            </button>
+          </>
         )}
+
+        {message && <p className="text-red-300 mt-3 text-center">{message}</p>}
 
         <p className="mt-4 text-white text-center text-sm">
           {isRegister

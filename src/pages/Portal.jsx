@@ -8,7 +8,7 @@ const Portal = () => {
     // Save role for persistence
     localStorage.setItem("selectedRole", role);
 
-    // Pass it via React Router too
+    // Navigate to login page and pass role in state
     navigate("/login", { state: { selectedRole: role } });
   };
 

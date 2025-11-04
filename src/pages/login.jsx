@@ -10,7 +10,7 @@ const Login = () => {
   const location = useLocation();
   const { login } = useAuth();
 
-  // Check if we came from Portal with a selected role
+  // Role selected previously in Portal or default
   const selectedRole =
     location.state?.selectedRole || localStorage.getItem("role") || "user";
 
@@ -22,7 +22,6 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Switch between login and register
   const toggleMode = () => {
     setIsRegister(!isRegister);
     setMessage("");
@@ -37,19 +36,18 @@ const Login = () => {
     setIsLoading(true);
     setMessage("");
 
-    // Confirm password check during registration
+    // Check password match
     if (isRegister && password !== confirmPassword) {
       setMessage("Passwords do not match!");
       setIsLoading(false);
       return;
     }
 
-    // Include role in payload
+    // Prepare payload
     const payload = isRegister
       ? { full_name: fullName, email, password, role: selectedRole || "user" }
       : { email, password, role: selectedRole || "user" };
 
-    // Use unified auth endpoint
     const endpoint = isRegister
       ? `${BASE_URL}/auth/register`
       : `${BASE_URL}/auth/login`;
@@ -68,18 +66,18 @@ const Login = () => {
           setMessage("✅ Registered successfully! You can now log in.");
           setIsRegister(false);
         } else {
-          // Save user session in AuthContext
+          // Save session
           login(data.user, data.access_token);
+
+          // Optional: save role for Portal internal logic
+          localStorage.setItem("role", data.user.role);
+
           setMessage("✅ Login successful!");
 
-          // Navigate based on role
+          // Navigate to /portal (no /user)
           setTimeout(() => {
-            if (selectedRole) {
-              navigate(`/portal/${selectedRole}`);
-            } else {
-              navigate("/portal");
-            }
-          }, 1000);
+            navigate("/portal");
+          }, 800);
         }
       } else {
         setMessage(data.error || "❌ Something went wrong.");
